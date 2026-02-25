@@ -128,7 +128,7 @@ def show_admin_page():
                 st.warning("URL을 입력해주세요.")
 
     with tab2:
-        st.subheader("뉴스 수집 및 보고서 생성 맞춤 설정")
+        st.subheader("뉴스 수집 및 보고서 생성 맞춤 설정 with Gemini 3 Flash ")
         if st.button("최근 3일치 뉴스 수집 및 AI 리포트 생성 ✨", type="primary"):
             api_key = st.secrets.get("GEMINI_API_KEY")
             if not api_key:
