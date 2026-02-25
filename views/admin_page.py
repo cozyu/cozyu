@@ -44,8 +44,8 @@ def generate_report(api_key, articles):
         return "수집된 기사가 없습니다."
 
     genai.configure(api_key=api_key)
-    # Using gemini-2.5-flash
-    model = genai.GenerativeModel('gemini-2.5-flash')
+    # Using gemini-3-flash-preview
+    model = genai.GenerativeModel('gemini-3-flash-preview')
 
     prompt = """
 다음은 최근 IT 뉴스 기사들의 제목, 요약, 링크 정보입니다.
@@ -144,7 +144,7 @@ def show_admin_page():
             else:
                 st.success(f"총 {len(articles)}개의 기사를 수집했습니다. AI 분석을 시도합니다...")
 
-                with st.spinner("Gemini 2.5 Flash가 보고서를 작성 중입니다. 잠시만 기다려주세요..."):
+                with st.spinner("Gemini 3 Flash가 보고서를 작성 중입니다. 잠시만 기다려주세요..."):
                     report = generate_report(api_key, articles)
                     
                 today_str = datetime.now().strftime("%Y-%m-%d")
