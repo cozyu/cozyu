@@ -69,9 +69,24 @@ def generate_report(api_key, articles):
     except Exception as e:
         return f"보고서 생성 중 오류가 발생했습니다: {e}"
 
+import subprocess
+
+def get_latest_git_commit_date():
+    try:
+        git_date = subprocess.check_output(
+            ['git', 'log', '-1', '--format=%cd', '--date=format:%Y-%m-%d %H:%M:%S']
+        ).decode('utf-8').strip()
+        return git_date
+    except Exception:
+        return None
+
 def show_admin_page():
-    st.title("⚙️ 관리자 대시보드")
-    
+    git_date = get_latest_git_commit_date()
+    if git_date:
+        st.title(f"⚙️ 관리자 대시보드 (업데이트: {git_date})")
+    else:
+        st.title("⚙️ 관리자 대시보드")
+
     # Simple Password Authentication
     admin_password = st.secrets.get("ADMIN_PASSWORD", "admin")
     
