@@ -1,7 +1,7 @@
 import streamlit as st
 import feedparser
 import google.generativeai as genai
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pandas as pd
 import time
 from github_storage import load_feeds, save_feeds, save_report, load_stats
@@ -10,7 +10,8 @@ def collect_recent_news(feed_urls, hours=24):
     """
     Collect news items from given RSS feeds that were published in the last `hours` hours.
     """
-    cutoff_date = datetime.now() - timedelta(hours=hours)
+    KST = timezone(timedelta(hours=9))
+    cutoff_date = datetime.now(KST) - timedelta(hours=hours)
     articles = []
 
     for url in feed_urls:
@@ -20,9 +21,9 @@ def collect_recent_news(feed_urls, hours=24):
                 # Try to parse published date
                 published_time = None
                 if hasattr(entry, 'published_parsed') and entry.published_parsed:
-                    published_time = datetime.fromtimestamp(time.mktime(entry.published_parsed))
+                    published_time = datetime.fromtimestamp(time.mktime(entry.published_parsed), tz=timezone.utc).astimezone(KST)
                 elif hasattr(entry, 'updated_parsed') and entry.updated_parsed:
-                    published_time = datetime.fromtimestamp(time.mktime(entry.updated_parsed))
+                    published_time = datetime.fromtimestamp(time.mktime(entry.updated_parsed), tz=timezone.utc).astimezone(KST)
                 
                 if published_time and published_time >= cutoff_date:
                     articles.append({
@@ -69,23 +70,8 @@ def generate_report(api_key, articles):
     except Exception as e:
         return f"보고서 생성 중 오류가 발생했습니다: {e}"
 
-import subprocess
-
-def get_latest_git_commit_date():
-    try:
-        git_date = subprocess.check_output(
-            ['git', 'log', '-1', '--format=%cd', '--date=format:%Y-%m-%d %H:%M:%S']
-        ).decode('utf-8').strip()
-        return git_date
-    except Exception:
-        return None
-
 def show_admin_page():
-    git_date = get_latest_git_commit_date()
-    if git_date:
-        st.title(f"⚙️ 관리자 대시보드 (업데이트: {git_date})")
-    else:
-        st.title("⚙️ 관리자 대시보드")
+    st.title("⚙️ 관리자 대시보드")
 
     # Simple Password Authentication
     admin_password = st.secrets.get("ADMIN_PASSWORD", "admin")
@@ -162,7 +148,8 @@ def show_admin_page():
                 with st.spinner("Gemini 3 Flash가 보고서를 작성 중입니다. 잠시만 기다려주세요..."):
                     report = generate_report(api_key, articles)
                     
-                today_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                KST = timezone(timedelta(hours=9))
+                today_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
                 save_report(today_str, report)
                 
                 st.success("✅ 보고서 생성 및 저장이 완료되었습니다!")

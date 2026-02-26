@@ -1,6 +1,6 @@
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 # Adjust path to import local modules
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -27,7 +27,8 @@ def main():
     print(f"Collected {len(articles)} articles. Generating report...")
     report = generate_report(api_key, articles)
     
-    today_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    KST = timezone(timedelta(hours=9))
+    today_str = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
     print("Saving report...")
     save_report(today_str, report)
     
