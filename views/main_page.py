@@ -13,9 +13,9 @@ def show_main_page():
     # Sort dates descending
     sorted_dates = sorted(reports.keys(), reverse=True)
     
-    st.sidebar.markdown("### 📅 지난 보고서 보기")
-    selected_date = st.sidebar.radio("날짜 선택", sorted_dates)
+    st.sidebar.markdown("### 🕒 지난 보고서 보기 (생성 시각 기준)")
+    selected_date = st.sidebar.radio("생성 시각 선택", sorted_dates)
     
     if selected_date:
-        st.subheader(f"📅 {selected_date} 브리핑")
+        st.subheader(f"🕒 {selected_date} 보고서")
         st.markdown(reports[selected_date])

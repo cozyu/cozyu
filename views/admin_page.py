@@ -6,11 +6,11 @@ import pandas as pd
 import time
 from github_storage import load_feeds, save_feeds, save_report, load_stats
 
-def collect_recent_news(feed_urls, days=3):
+def collect_recent_news(feed_urls, hours=24):
     """
-    Collect news items from given RSS feeds that were published in the last `days` days.
+    Collect news items from given RSS feeds that were published in the last `hours` hours.
     """
-    cutoff_date = datetime.now() - timedelta(days=days)
+    cutoff_date = datetime.now() - timedelta(hours=hours)
     articles = []
 
     for url in feed_urls:
@@ -129,7 +129,7 @@ def show_admin_page():
 
     with tab2:
         st.subheader("뉴스 수집 및 보고서 생성 맞춤 설정 with Gemini 3 Flash ")
-        if st.button("최근 3일치 뉴스 수집 및 AI 리포트 생성 ✨", type="primary"):
+        if st.button("최근 24시간 뉴스 수집 및 AI 리포트 생성 ✨", type="primary"):
             api_key = st.secrets.get("GEMINI_API_KEY")
             if not api_key:
                 st.error("GEMINI_API_KEY가 secrets에 설정되어 있지 않습니다.")
@@ -137,17 +137,17 @@ def show_admin_page():
 
             with st.spinner("RSS 기사 수집 중..."):
                 current_feeds = load_feeds()
-                articles = collect_recent_news(current_feeds, days=3)
+                articles = collect_recent_news(current_feeds, hours=24)
             
             if not articles:
-                st.warning("최근 3일간 수집된 새 기사가 없습니다.")
+                st.warning("최근 24시간 동안 수집된 새 기사가 없습니다.")
             else:
                 st.success(f"총 {len(articles)}개의 기사를 수집했습니다. AI 분석을 시도합니다...")
 
                 with st.spinner("Gemini 3 Flash가 보고서를 작성 중입니다. 잠시만 기다려주세요..."):
                     report = generate_report(api_key, articles)
                     
-                today_str = datetime.now().strftime("%Y-%m-%d")
+                today_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 save_report(today_str, report)
                 
                 st.success("✅ 보고서 생성 및 저장이 완료되었습니다!")
