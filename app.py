@@ -20,7 +20,7 @@ def get_latest_git_commit_date_kst():
 
 # Set up page config
 st.set_page_config(
-    page_title="AI-Powered IT Newsroom",
+    page_title="AI-Powered Financial Security Newsroom",
     page_icon="📰",
     layout="wide",
     initial_sidebar_state="expanded"

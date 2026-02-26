@@ -2,7 +2,7 @@ import streamlit as st
 from github_storage import load_reports
 
 def show_main_page():
-    st.title("📰 1장짜리 IT 보고서")
+    st.title("📰 금융보안 뉴스 브리핑")
     
     reports = load_reports()
     
@@ -17,5 +17,5 @@ def show_main_page():
     selected_date = st.sidebar.radio("생성 시각 선택", sorted_dates)
     
     if selected_date:
-        st.subheader(f"🕒 {selected_date} 보고서")
+        st.subheader(f"🕒 {selected_date} ")
         st.markdown(reports[selected_date])
